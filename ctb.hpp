@@ -133,11 +133,12 @@ void for_(F func)
 }
 
 constexpr int n_m3pi_bins = 44;
+constexpr double max_m2pi(int m2pi_bin) { return 0.92 + 0.02*m2pi_bin - mpi; }
 constexpr auto last_m2pis{[]()
 {
     std::array<int, n_m3pi_bins>res{};
     for_<n_m3pi_bins>([&](auto i) {
-            constexpr double new_edge =  0.92 + 0.02*i.value - mpi;
+            constexpr double new_edge =  max_m2pi(i.value);
             constexpr int k = count_if(edges_table, [&](const auto x) {
                     return x < new_edge;
                     }) - 1;
@@ -156,11 +157,11 @@ constexpr auto last_m2pis{[]()
 template<int m3pi_bin>
 constexpr auto make_m2pi_bins()
 {
-    constexpr int n_m2pi_bins = last_m2pis[m3pi_bin]+1;
+    constexpr int n_m2pi_bins = last_m2pis[m3pi_bin]+2;
     std::array<double, n_m2pi_bins>res{};
     for_<n_m2pi_bins-1>([&](auto i) {
             res[i.value] = edges_table[i.value];
             });
-    res[n_m2pi_bins-1] = 0.92 + 0.02*(n_m2pi_bins-1) - mpi;
+    res[n_m2pi_bins-1] = max_m2pi(m3pi_bin);
     return res;
 }
