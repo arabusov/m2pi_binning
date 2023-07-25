@@ -86,5 +86,7 @@ int main()
     std::cout << "1-- table:" << std::endl;
     print_table(a2v(omm::edges_table));
     print_last(a2v(omm::edges_table), a2vi(omm::last_m2pis));
+    const auto m2pi_bins = omm::make_m2pi_bins<20>();
+    print_table(a2v(m2pi_bins));
     return 0;
 }
