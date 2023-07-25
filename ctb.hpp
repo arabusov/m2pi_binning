@@ -5,6 +5,7 @@
  * always include these two before including ctb:
  * #include <array>
  * #include <cmath>
+ * #include <algorithm>
  */
 
 
@@ -14,8 +15,8 @@ constexpr int n_el(double start, double end, double step)
 {
     return std::ceil((end-start)/step);
 }
-
-template <int entry> constexpr auto make_primitive()
+template <int entry> constexpr
+auto make_primitive()
 {
     constexpr double start = bin_table[entry][0],
     end = bin_table[entry+1][0],
@@ -101,3 +102,29 @@ struct concated<0> {
 };
 
 constexpr auto edges_table {concated<n_trans-1>::a};
+
+    // C&P from stackoverflow
+template<typename T, size_t N, typename Pred, size_t... Is>
+constexpr size_t count_if_helper(std::array<T, N> const& arr, Pred&& pred,
+        std::index_sequence<Is...>*){
+    return ((size_t)(bool)pred(arr[Is]) + ...);
+}
+
+template<typename T, size_t N, typename Pred>
+constexpr size_t count_if(std::array<T, N> const& arr, Pred&& pred){
+    return count_if_helper(arr, std::forward<Pred>(pred),
+            (std::make_index_sequence<N>*)nullptr);
+}
+
+constexpr int n_m3pi_bins = 44;
+constexpr auto last_m2pis {[]()
+{
+    std::array<int, n_m3pi_bins>res{};
+    for (auto i = 0; i < n_m3pi_bins; i++) {
+        res[i] = count_if(edges_table, [&](const auto x) {
+                return x < (0.9+0.02*i-mpi);
+                });
+    }
+    return res;
+}()
+};

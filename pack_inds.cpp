@@ -3,9 +3,11 @@
 // needed for ctb.hpp
 #include <array>
 #include <cmath>
+#include <algorithm>
 
+constexpr double mpi=0.13957039;
 // In this section units are MeV
-constexpr double start_at = 279.;
+constexpr double start_at = 1e+3*mpi * 2;
 constexpr double stop_at = 1800.;
 
 namespace omm {
@@ -53,9 +55,14 @@ void print_table(const std::vector<double> &table)
     std::cout << "Size of table: " << table.size() << std::endl;
 }
 
+#define a2v(x) (std::vector<double>(x.cbegin(), x.cend()))
 int main()
 {
-    print_table(std::vector<double>(omm::edges_table.cbegin(), omm::edges_table.cend()));
-    print_table(std::vector<double>(zpp::edges_table.cbegin(), zpp::edges_table.cend()));
+    std::cout << "0++ table:" << std::endl;
+    print_table(a2v(zpp::edges_table));
+    std::cout << "Last m2pis for 0++" << std::endl;
+    print_table(a2v(zpp::last_m2pis));
+    std::cout << "1-- table:" << std::endl;
+    print_table(a2v(omm::edges_table));
     return 0;
 }
