@@ -55,14 +55,36 @@ void print_table(const std::vector<double> &table)
     std::cout << "Size of table: " << table.size() << std::endl;
 }
 
+void print_last(const std::vector<double> &edges,
+        const std::vector<int> &last_inds)
+{
+    bool cr = false;
+    for (auto i = 0; i < last_inds.size(); i++) {
+        const auto m3pi = 0.92+i*0.02;
+        const auto edge = edges[last_inds[i]];
+        cr = false;
+        std::cout << std::setw(8) << m3pi-mpi << ":" << std::setw(7) << edge
+            << ",   ";
+        if (03 == (i&03)) {
+            std::cout << std::endl;
+            cr = true;
+        }
+    }
+    if (not cr)
+        std::cout << std::endl;
+}
+
+
 #define a2v(x) (std::vector<double>(x.cbegin(), x.cend()))
+#define a2vi(x) (std::vector<int>(x.cbegin(), x.cend()))
 int main()
 {
     std::cout << "0++ table:" << std::endl;
     print_table(a2v(zpp::edges_table));
     std::cout << "Last m2pis for 0++" << std::endl;
-    print_table(a2v(zpp::last_m2pis));
+    print_last(a2v(zpp::edges_table), a2vi(zpp::last_m2pis));
     std::cout << "1-- table:" << std::endl;
     print_table(a2v(omm::edges_table));
+    print_last(a2v(omm::edges_table), a2vi(omm::last_m2pis));
     return 0;
 }

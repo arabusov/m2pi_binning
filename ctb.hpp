@@ -116,15 +116,40 @@ constexpr size_t count_if(std::array<T, N> const& arr, Pred&& pred){
             (std::make_index_sequence<N>*)nullptr);
 }
 
-constexpr int n_m3pi_bins = 44;
-constexpr auto last_m2pis {[]()
+template<std::size_t N>
+struct num { static const constexpr int value = N; };
+
+template <class F, std::size_t... Is> constexpr
+void for_(F func, std::index_sequence<Is...>)
 {
-    std::array<int, n_m3pi_bins>res{};
-    for (auto i = 0; i < n_m3pi_bins; i++) {
-        res[i] = count_if(edges_table, [&](const auto x) {
-                return x < (0.9+0.02*i-mpi);
-                });
-    }
+  (func(num<Is>{}), ...);
+}
+
+
+template <std::size_t N, typename F> constexpr
+void for_(F func)
+{
+  for_(func, std::make_index_sequence<N>());
+}
+
+
+constexpr int n_m3pi_bins = 44;
+constexpr auto last_m2pis{[]()
+{
+    std::array<double, n_m3pi_bins>res{};
+    for_<n_m3pi_bins>([&](auto i) {
+            constexpr double new_edge =  0.92 + 0.02*i.value - mpi;
+            constexpr int k = count_if(edges_table, [&](const auto x) {
+                    return x < new_edge;
+                    }) - 1;
+            constexpr double dprev = edges_table[k] - edges_table[k-1];
+            constexpr double dlast = new_edge - edges_table[k];
+            static_assert(dlast > 0);
+            if (dlast < dprev/2.)
+                res[i.value] = k - 1;
+            else
+                res[i.value] = k;
+    });
     return res;
 }()
 };
