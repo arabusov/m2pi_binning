@@ -6,10 +6,13 @@
 #include <algorithm>
 
 constexpr double mpi=0.13957039;
+constexpr int n_m3pi_bins = 44;
+constexpr double max_m2pi(int m2pi_bin) { return 0.92 + 0.02*m2pi_bin - mpi; }
 // In this section units are MeV
 constexpr double start_at = 1e+3*mpi * 2;
-constexpr double stop_at = 1800.;
+constexpr double stop_at = 1840.;
 
+#include "meta.hpp"
 namespace omm {
     // 1-- table in MeV
     constexpr double bin_table[][2] {
@@ -20,7 +23,7 @@ namespace omm {
             { 792, 8 },
             { 800, 20 },
             { 920, 40 },
-            {1840, 40 }  // effective end
+            {stop_at, 40 }  // effective end
     };
 #include "ctb.hpp"
 }
@@ -32,7 +35,7 @@ namespace zpp {
             { 280, 40 },
             { 920, 10 },
             { 1080, 40 },
-            { 1840, 40 }  // effective end
+            { stop_at, 40 }  // effective end
     };
 #include "ctb.hpp"
 }
