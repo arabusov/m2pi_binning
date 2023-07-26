@@ -79,3 +79,27 @@ constexpr auto make_m2pi_bins()
     res[n_m2pi_bins-1] = max_m2pi(m3pi_bin);
     return res;
 }
+
+constexpr int max_n_m2pi_bins = make_m2pi_bins<n_m3pi_bins-1>().size();
+
+template<int m3pi_bin, int fsize>
+constexpr auto make_m2pi_bins_fixed_size()
+{
+    std::array<double, fsize> res {};
+    constexpr auto orig { make_m2pi_bins<m3pi_bin>() };
+    static_assert(orig.size() <= fsize);
+    for (auto i = 0; i < orig.size(); i++) {
+        res[i] = orig[i];
+    }
+    return res;
+}
+
+template<int fsize>
+constexpr auto make_m2pi_isobar_table()
+{
+    std::array<std::array<double, fsize>, n_m3pi_bins> res {};
+    for_<n_m3pi_bins>([&](auto i) {
+            res[i.value] = make_m2pi_bins_fixed_size<i.value, fsize>();
+            });
+    return res;
+}
